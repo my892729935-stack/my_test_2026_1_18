@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 硬件测试助手</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        button { padding: 15px; margin: 10px; width: 80%; font-size: 16px; border-radius: 8px; border: none; background: #007AFF; color: white; }
+        #log { background: #f0f0f0; padding: 10px; text-align: left; height: 200px; overflow-y: auto; font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>🚀 硬件连接测试</h2>
+    
+    <button onclick="testBluetooth()">1. 搜索并连接蓝牙设备</button>
+    
+    <div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <input type="text" id="ipAddr" placeholder="输入设备IP (如 192.168.1.5)" style="width: 75%; padding: 10px;">
+        <button onclick="testWifi()">2. 发送 Wi-Fi 测试指令</button>
+    </div>
+
+    <div id="log">日志等待中...</div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        function logger(msg) {
+            logDiv.innerHTML += `<div>> ${msg}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // 蓝牙测试逻辑
+        async function testBluetooth() {
+            logger("正在请求蓝牙权限...");
+            try {
+                // 搜索所有设备
+                const device = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true
+                });
+                logger(`✅ 已发现设备: ${device.name}`);
+            } catch (error) {
+                logger(`❌ 蓝牙错误: ${error}`);
+            }
+        }
+
+        // Wi-Fi 测试逻辑
+        async function testWifi() {
+            const ip = document.getElementById('ipAddr').value;
+            if (!ip) { logger("请输入 IP 地址"); return; }
+            logger(`正在尝试连接 http://${ip} ...`);
+            try {
+                // 尝试发一个简单的 GET 请求
+                const response = await fetch(`http://${ip}/`, { mode: 'no-cors' });
+                logger(`✅ 已向 ${ip} 发送请求 (状态: 已发出)`);
+            } catch (error) {
+                logger(`❌ Wi-Fi 访问失败，请检查 IP 和网络`);
+            }
+        }
+    </script>
+</body>
+</html>
